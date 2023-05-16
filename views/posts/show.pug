@@ -1,9 +1,5 @@
 extends ../layouts/app.pug
 
 block content
-  div
-    a(href='/') Main page
-  if post
-    div
-      p #{post.title}
-      p #{post.body}
+  h3= post.title
+  = post.body

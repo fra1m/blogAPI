@@ -8,7 +8,7 @@
     "blogapi": "bin/app.js"
   },
   "scripts": {
-    "start":"babel-node bin/app.js",
+    "start": "babel-node bin/app.js",
     "nodemon": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
