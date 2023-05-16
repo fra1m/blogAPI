@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize';
-import { DataTypes } from 'sequelize';
+const { Sequelize, DataTypes } = require('sequelize');
+
 // Создание объекта sequelize для установки соединения
-const sequelize = new Sequelize('MyBlogAPI', 'myblogdb', '100797', {
+const sequelize = new Sequelize('myblogdb', 'vasili','100797', {
   host: 'localhost',
   dialect: 'postgres',
 });
