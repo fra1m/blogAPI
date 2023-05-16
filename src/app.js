@@ -43,10 +43,6 @@ app.get('/posts', (_req, res) => {
   res.render('posts/index', { posts });
 });
 
-app.get('/register', (req, res) => {
-  res.render('posts/register');
-});
-
 app.get('/posts/new', (_req, res) => {
   res.render('posts/new', { form: {}, errors: {} });
 });
@@ -80,6 +76,10 @@ app.post('/posts', (req, res) => {
 });
 
 // Регистрация пользователя
+app.get('/register', (req, res) => {
+  res.render('posts/register');
+});
+
 app.post('/register', async (req, res) => {
   const { name, login, password } = req.body;
 
