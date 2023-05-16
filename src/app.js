@@ -18,6 +18,9 @@ const Post = new definePostModel(sequelize);
 // Middleware для парсинга JSON
 app.use(bodyParser.json());
 
+// Подключение Bootstrap
+app.use('/bootstrap', express.static('node_modules/bootstrap/dist'));
+
 // Регистрация пользователя
 app.post('/register', (req, res) => {
   // Реализация регистрации пользователя
