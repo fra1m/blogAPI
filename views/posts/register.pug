@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    title Регистрация пользователя
+    style.
+      .notification {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .show-notification {
+        opacity: 1;
+      }
+    script(src="front-script.js")
+  body
+    h1 Регистрация пользователя
+
+    // Условие для отображения сообщения об успешной регистрации
+    if registered
+      .notification#success-notification
+        p Регистрация прошла успешно!
+
+    // Условие для отображения сообщения о существующем пользователе
+    if userAlreadyExists
+      .notification#error-notification
+        p Пользователь с таким логином уже зарегистрирован.
+
+    form(action="/register" method="POST")
+      label(for="name") Имя пользователя:
+      input(type="text" name="name" required)
+      br
+      label(for="login") Логин:
+      input(type="text" name="login" required)
+      br
+      label(for="password") Пароль:
+      input(type="password" name="password" required)
+      br
+      button(type="submit") Зарегистрироваться
