@@ -1,19 +1,12 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
-import { Sequelize, DataTypes } from 'sequelize';
-import definePostModel from '../entities/Post.js'
+import {importCJSFile} from './scripts.js'
 
 const app = express();
 
-// Подключение к базе данных PostgreSQL
-const sequelize = new Sequelize('database', 'username', 'password', {
-  host: 'localhost',
-  dialect: 'postgres',
-});
-
 // Определение модели для записи блога
-const Post = new definePostModel(sequelize);
+const { User, sequelize } = importCJSFile('../entities/Post.cjs');
 
 // Middleware для парсинга JSON
 app.use(bodyParser.json());

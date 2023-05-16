@@ -18,24 +18,28 @@ sequelize
 
 
 // Определение модели User
+
 const User = sequelize.define('User', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: false
   },
-  username: {
+  name: {
     type: DataTypes.STRING,
-    allowNull: false,
-    field: 'username' // Указываем соответствующее поле в таблице
+    allowNull: false
+  },
+  login: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-    field: 'password' // Указываем соответствующее поле в таблице
+    allowNull: false
   }
 }, {
-  tableName: 'D_B' // Указываем имя существующей таблицы
+  tableName: 'users', 
+  timestamps: false 
 });
 
 // Получение всех пользователей
@@ -46,6 +50,5 @@ User.findAll()
   .catch(error => {
     console.error('Ошибка при получении пользователей:', error);
   });
-
-// Экспорт модели
+  
 module.exports = { User, sequelize };
