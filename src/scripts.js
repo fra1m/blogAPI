@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
-import { createRequire } from 'module';
+import { fileURLToPath } from "url";
+import { join, dirname } from "path";
+import { createRequire } from "module";
 
 const importCJSFile = (filename) => {
   const __filename = fileURLToPath(import.meta.url);
@@ -11,4 +11,4 @@ const importCJSFile = (filename) => {
   return require(filePath);
 };
 
-export {importCJSFile}
+export { importCJSFile };
