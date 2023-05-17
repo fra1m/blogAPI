@@ -31,7 +31,7 @@ export default () => {
 
   //Примеры постов
   let posts = [
-    new Post("hello", "how are your?"),
+    new Post("Привет", "how are your?"),
     new Post("nodejs", "story about nodejs"),
   ];
 
