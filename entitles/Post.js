@@ -1,4 +1,6 @@
 class Post {
+    static id = 1;
+  
     constructor(title, body) {
       this.id = Post.id;
       Post.id += 1;
@@ -6,8 +8,6 @@ class Post {
       this.body = body;
     }
   }
-  
-  Post.id = 1;
   
   export default Post;
   

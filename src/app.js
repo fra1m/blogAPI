@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
 import path from 'path'
 import { fileURLToPath } from 'url';
+import morgan from 'morgan';
+import session from 'express-session';
 
 
 import Post from '../entitles/Post.js'
@@ -10,10 +12,23 @@ import {importCJSFile} from './scripts.js'
 
 export default () => {
 const app = new Express();
-  
+app.use('/static', Express.static('node_modules'));
+
 // Определение модели для записи блога
 const { User, sequelize } = importCJSFile('../models/Users.cjs');
 const Users = new User(sequelize)
+
+// Использование сессий
+app.use(
+  session({
+    secret: 'my-secret-key',
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+// Использование morgan для логирования запросов
+app.use(morgan('combined'));
 
 //Примеры постов
 let posts = [
@@ -32,6 +47,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Подключение Bootstrap
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const pathway = path.join(__dirname, 'public');
+app.use('/assets', Express.static(pathway));
 app.use('/bootstrap', Express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
 
 // Реализация постов
@@ -44,7 +61,7 @@ app.get('/posts', (_req, res) => {
 });
 
 app.get('/posts/new', (_req, res) => {
-  res.render('posts/new', { form: {}, errors: {} });
+  res.render('posts/new_post', { form: {}, errors: {} });
 });
 
 app.get('/posts/:id', (req, res) => {
@@ -57,22 +74,56 @@ app.post('/posts', (req, res) => {
 
   const errors = {};
   if (!title) {
-    errors.title = "Title can't be blank";
+    errors.title = "Can't be blank";
   }
 
   if (!body) {
-    errors.body = "Body can't be blank";
+    errors.body = "Can't be blank";
   }
 
   if (Object.keys(errors).length === 0) {
     const post = new Post(title, body);
     posts.push(post);
-    res.redirect(`posts/${post.id}`);
+    res.redirect(`/posts/${post.id}`);
     return;
   }
 
   res.status(422);
   res.render('posts/new_post', { form: req.body, errors });
+});
+
+app.get('/posts/:id/edit', (req, res) => {
+  const post = posts.find((p) => p.id.toString() === req.params.id);
+  res.render('posts/edit', { post, form: post, errors: {} });
+});
+
+app.patch('/posts/:id', (req, res) => {
+  const post = posts.find((p) => p.id.toString() === req.params.id);
+  const { title, body } = req.body;
+
+  const errors = {};
+  if (!title) {
+    errors.title = "Can't be blank";
+  }
+
+  if (!body) {
+    errors.body = "Can't be blank";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    res.status(422);
+    res.render('posts/edit', { post, form: req.body, errors });
+    return;
+  }
+
+  post.title = title;
+  post.body = body;
+  res.redirect(`/posts/${post.id}/edit`);
+});
+
+app.delete('/posts/:id', (req, res) => {
+  posts = posts.filter((post) => post.id.toString() !== req.params.id);
+  res.redirect('/posts');
 });
 
 // Регистрация пользователя
