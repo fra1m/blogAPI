@@ -5,17 +5,32 @@ import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import session from "express-session";
+import { sequelize } from "./database.js";
+import { User, User_Post } from "../models/models.js";
+
 
 import Post from "../entitles/Post.js";
-import { importCJSFile } from "./scripts.js";
 
-export default () => {
+export default (PORT) => {
   const app = new Express();
-  app.use("/static", Express.static("node_modules"));
 
-  // Определение модели для записи блога
-  const { User, sequelize } = importCJSFile("../models/Users.cjs");
-  const Users = new User(sequelize);
+  const modules = { User, User_Post }
+
+  //Подключение к базе данных
+  const start = async () => {
+    try {
+      await sequelize.authenticate()
+      await sequelize.sync()
+      console.log(`Соединение с базой данных успешно установлено ${process.env.DB_NAME}`)
+      app.listen(PORT, () => {console.log(`Server is running on port ${PORT}`)});
+    } catch (error) {
+      console.log(`Ошибка подключения к базе данных: ${error}`)
+    }
+  }  
+
+  start()
+
+  app.use("/static", Express.static("node_modules"));
 
   // Использование сессий
   app.use(
@@ -27,11 +42,11 @@ export default () => {
   );
 
   // Использование morgan для логирования запросов
-  app.use(morgan("combined"));
+  app.use(morgan(':method :url :status'));
 
   //Примеры постов
   let posts = [
-    new Post("Привет", "how are your?"),
+    new Post("Гари", "how are your?"),
     new Post("nodejs", "story about nodejs"),
   ];
 
@@ -133,41 +148,7 @@ export default () => {
   });
 
   app.post("/register", async (req, res) => {
-    const { name, login, password } = req.body;
-
-    const existingUser = await User.findOne({
-      where: {
-        login: login,
-      },
-    });
-
-    if (existingUser) {
-      // Пользователь уже существует, отправка сообщения об ошибке
-      res
-        .status(400)
-        .json({ error: "Пользователь с таким логином уже зарегистрирован" });
-      return;
-    }
-
-    try {
-      // Создание нового пользователя
-      const newUser = await User.create({
-        name,
-        login,
-        password,
-      });
-
-      // Отправка ответа с данными нового пользователя
-      res.json({
-        id: newUser.id,
-        name: newUser.name,
-        login: newUser.login,
-        registered: true,
-      });
-    } catch (error) {
-      console.error("Ошибка при регистрации пользователя:", error);
-      res.status(500).json({ error: "Ошибка при регистрации пользователя" });
-    }
+    //Реализация нового пользователя
   });
 
   // Авторизация пользователя
