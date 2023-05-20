@@ -17,4 +17,4 @@ Backend BlogAPI
 2. Navigate to the project directory with the command `cd <folder name>`
 3. Install dependencies with the command `npm install`
 4. Start the application with the command `node app.js` or `npm start`
-5. Go to http://localhost:3000 in your browser to run the application.
+5. Go to `http://localhost:5001/api/posts` in your browser to run the application.
