@@ -1,16 +1,30 @@
 import { Router } from "express";
-import postControllers from "../controllers/postControllers.js";
+import * as postControllers from "../controllers/postControllers.js";
+import { postCreateValid } from "../validations/validations.js";
+import authMiddlewere from "../middleware/authMiddlewere.js";
+import validationsHandErr from "../middleware/validationsHandErr.js";
 
-const router = new Router()
-const post = new postControllers()
+const router = new Router();
 
+router.get("/", postControllers.get);
+router.get("/:id", postControllers.getOne);
 
-router.get('/', post.get)
-router.get('/:id', post.getId)
-router.get('/post/new', post.postNew)
+router.patch(
+  "/:id",
+  authMiddlewere,
+  postCreateValid,
+  validationsHandErr,
+  postControllers.update
+);
 
-router.post('/', post.toPost)
+router.post(
+  "/",
+  authMiddlewere,
+  postCreateValid,
+  validationsHandErr,
+  postControllers.create
+);
 
-router.delete('/:id', post.toDelete)
+router.delete("/:id", authMiddlewere, postControllers.remove);
 
 export default router;

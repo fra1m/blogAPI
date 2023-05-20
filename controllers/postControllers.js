@@ -1,30 +1,81 @@
-export default class PostController {
-    
-    async get(req, res) {
-        const query = req.query
-        res.json(query)
+import { Posts, Users } from "../models/models.js";
+import ApiError from "../error/ApiError.js";
 
+export const get = async (req, res, next) => {
+  try {
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    const getPosts = await Posts.findAll({ limit, offset });
+    res.json({ getPosts });
+  } catch (error) {
+    console.log(error);
+    next(ApiError.badRequest(`Не удалось получить статьи`));
+  }
+};
+
+export const getOne = async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const getPosts = await Posts.findByPk(postId);
+    if (!getPosts) {
+      return next(ApiError.badRequest(`Не удалось найти статью!`));
     }
-    
-    async getId(req, res) {
-        const {id} =req.query
-        res.json(id)
+    res.json(getPosts);
+  } catch (error) {
+    console.log(error);
+    next(ApiError.internal(`Не удалось найти статью!`));
+  }
+};
+
+export const update = async (req, res, next) => {
+  try {
+    const { title, text, img } = req.body;
+    const postId = req.params.id;
+    const author = await Users.findByPk(req.user);
+    const post = await Posts.findByPk(postId);
+    if (post.author !== author.id) {
+      return next(ApiError.badRequest(`Отказано в доступе!`));
     }
+    await Posts.update(
+      { title, author: author.id, text, img },
+      { where: { author: post.author } }
+    );
+    res.json({ message: `Статься обновлена!` });
+  } catch (error) {
+    console.log(error);
+    next(ApiError.internal(`Статься не найдена или удалена!`));
+  }
+};
 
-    async postNew (req, res) {
-        res.json('postNew')
+export const create = async (req, res, next) => {
+  try {
+    const { title, text, img } = req.body;
+    const author = await Users.findByPk(req.user);
+    const newPost = await Posts.create({ title, author: author.id, text, img });
 
+    return res.json({ newPost });
+  } catch (error) {
+    console.log(error);
+    next(ApiError.internal(`Не удалось создать статью!`));
+  }
+};
+
+export const remove = async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const delPost = await Posts.findByPk(postId);
+    const author = await Users.findByPk(req.user);
+    if (!delPost) {
+      return next(ApiError.badRequest(`Статься не найдена или удалена!`));
     }
-
-    async toPost (req, res) {
-        res.json('toPostt')
-
+    if (delPost.author !== author.id) {
+      return next(ApiError.badRequest(`Отказано в доступе!`));
     }
-
-    async toDelete (req, res) {
-        res.json('toDelete')
-
-    }
-}
-
-
+    await Posts.destroy({ where: { id: postId } });
+    res.json({ message: `Статься удалена!` });
+  } catch (error) {
+    console.log(error);
+    next(ApiError.internal(`Статься не найдена или удалена!!!`));
+  }
+};

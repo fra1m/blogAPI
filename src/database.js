@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize } from "sequelize";
 
 // Создание объекта sequelize для установки соединения
 const sequelize = new Sequelize(
@@ -6,11 +6,9 @@ const sequelize = new Sequelize(
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   {
-    dialect: 'postgres',
+    dialect: "postgres",
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
   }
-  
-)
-
+);
 export { sequelize };

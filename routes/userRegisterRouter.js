@@ -1,13 +1,24 @@
 import { Router } from "express";
-import UserRegisterController from "../controllers/userRegisterControllers.js";
+import * as UserRegisterController from "../controllers/userRegisterControllers.js";
+import authMiddlewere from "../middleware/authMiddlewere.js";
+import { registerValid, loginValid } from "../validations/validations.js";
+import validationsHandErr from "../middleware/validationsHandErr.js";
 
-const router = new Router()
+const router = new Router();
 
-const reg = new UserRegisterController()
+router.post(
+  "/registration",
+  registerValid,
+  validationsHandErr,
+  UserRegisterController.registration
+);
+router.post(
+  "/login",
+  loginValid,
+  validationsHandErr,
+  UserRegisterController.login
+);
 
-router.post('/registration', reg.registration)
-router.post('/login', reg.login)
-router.get('/auth', reg.check)
+router.get("/auth/me", authMiddlewere, UserRegisterController.check);
 
 export default router;
-
