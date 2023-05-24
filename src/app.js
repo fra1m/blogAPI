@@ -65,7 +65,7 @@ export default (PORT) => {
       app.listen(PORT, () => {
         console.log(
           `Server is running on port ${PORT}
-        \nhttp://localhost:${PORT}/api`);
+        \nhttps://blogapi-dgha.onrender.com/api`);
       });
     } catch (error) {
       console.log(`Ошибка подключения к базе данных: ${error}`);
