@@ -56,9 +56,6 @@ export default (PORT) => {
           title: "Мой второй пост",
           text: `Привет, мир! Я ${user.name}`,
         });
-        console.log(
-          `Данные для пользователя ADMIN\nlogin: ${admin.email}\npassword: ${admin.password}\ntoken: ${token}`
-        );
       }
       console.log(
         `Соединение с базой данных успешно установлено ${process.env.DB_NAME}
